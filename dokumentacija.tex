@@ -21,12 +21,60 @@
 
 \maketitle
 
+%sadrzaj??
 \begin{abstract}
 Sažetak ako treba?
 \end{abstract}
 
-\section{Uvod}
-Uvod
+\section{Uvod u genetske algoritme}
+Genetski algoritmi predstavljaju grupu optimizacionih metoda koje se zasnivaju na principima prirodne selekcije i evolucije. Inspirisani su biološkim procesima kao što su selekcija, ukrštanje (kroz reprodukciju), mutacija i nasleđivanje, koji omogućavaju preživljavanje i adaptaciju organizama u prirodi. Slično tome, osnovni koraci u implementaciji genetskih algoritama uključuju selekciju, ukrštanje i mutaciju. Ovi koraci se ponavljaju kroz više generacija kako bi se iz populacije rešenja razvila najbolja moguća rešenja za dati problem.
+
+\begin{itemize}
+    \item \textbf{Selekcija} je proces odabira jedinki za ukrštanje na osnovu njihove prilagođenosti. Postoje dve osnovne varijante selekcije:
+    \begin{enumerate}
+        \item \textbf{Turnirska selekcija} - Odabir k slučajnih jedinki iz populacija i "turnirsko takmičenje" gde pobeđuje najprilagođenija od izabranih jedinki
+        \item \textbf{Ruletska selekcija} - U ovoj metodi, verovatnoća selekcije jedinke zavisi od njene uspešnosti u odnosu na ostale jedinke u populaciji. Prilagođenije jedinke imaju veću verovatnoću da budu izabrane, slično kao u ruletu.
+    \end{enumerate}
+    \item \textbf{Ukrštenje} omogućava kombinovanje gena odabranih jedinki, stvarajući nove potomke koji mogu naslediti najbolje karakteristike svojih "roditelja". Postoji nekoliko osnovnih varijanti ukrštanja:
+    \begin{enumerate}
+        \item \textbf{Jednopoziciono ukrštanje} - Genetski materijal od roditelja se deli na osnovu jedne slučajno odabrane tačke preseka, a potomci nasleđuju deo od oba roditelja prema toj tački.
+        \item \textbf{Višepoziciono ukrštanje} - Ova metoda koristi više tačaka preseka na genomima roditelja, što omogućava veću raznovrsnost u potomcima.
+        \item \textbf{Uniformno ukrštanje} - U ovoj varijanti, gene sa oba roditelja se nasumično kombinuju kako bi se stvorio potomak, bez fiksnih tačaka preseka.
+    \end{enumerate}
+    \item \textbf{Mutacija} se koristi da bi se unela nasumična promena u genetski kod jedinke, što omogućava istraživanje novih mogućnosti i sprečava algoritam da se "zaglavi" u lokalnim ekstemumima.
+\end{itemize}
+
+\textbf{Elitizam} je metoda koja garantuje da će najbolje jedinke iz trenutne generacije biti prenete u sledeću generaciju bez promena. Elitizam se koristi kako bi se sprečilo da se najbolja rešenja izgube tokom evolucije.
+
+Kroz ove procese, genetski algoritmi omogućavaju efikasno istraživanje prostora rešenja i postepeno poboljšanje kvaliteta rešenja tokom vremena.
+
+\section{Opis algoritma NSGA-II}
+NSGA je popularan genetski algoritam zasnovan na nedominaciji za višeciljnu optimizaciju. Njegova modifikovana verzija, NSGA-II, koja rešava neke probleme zbog kojih je kritikovana osnovna verzija algoritma, često se koristi kao efikasnije rešenje u primenama višeciljne optimizacije.
+Višeciljna optimizacija podrazumeva istovremenu optimizaciju dva ili više međusobno suprostavljenih ciljeva. Cilj je naći skup rešenja koji je najbolji kompromis između ciljeva. Ta rešenja formiraju tzv. \textbf{Pareto front}, u kojem nijedno rešenje nije bolje od drugog, osim ako se jedan cilj ne poboljša na račun pogoršanja drugog.
+
+U NSGA-II algoritmu, termini \textit{non-dominated} i \textit{dominated} se koriste da opišu odnos između rešenja na osnovu njihovih performansi u odnosu na više ciljeva optimizacije.
+
+Rešenje se smatra \textbf{nedominiranim} (engl. \textit{non-dominated}) u odnosu na drugo rešenje ako nijedno od njih nije bolje u svim ciljevima. Drugim rečima, rešenje \(A\) je \textit{nedominirano} u odnosu na rešenje \(B\) ako:
+
+\begin{itemize}
+    \item \(A\) nije lošije u svim ciljevima od \(B\),
+    \item i \(B\) nije lošije u svim ciljevima od \(A\).
+\end{itemize}
+
+Rešenje se smatra \textbf{dominiranim} (engl. \textit{dominated}) u odnosu na drugo rešenje ako postoji rešenje koje je bolje u svim ciljevima. Drugim rečima, rešenje \(A\) je \textit{dominirano} u odnosu na rešenje \(B\) ako:
+
+\begin{itemize}
+    \item \(B\) je bolje ili jednako u svim ciljevima od \(A\),
+    \item i u barem jednom cilju \(B\) je bolje od \(A\).
+\end{itemize}
+
+Kratak opis algoritma:
+Prvo se populacija inicijalizuje na standardan način, u skladu sa problemom koji rešavamo. Nakon toga, jedinke u njoj se sortiraju po frontovima prema principu nedominacije. Prvi front je potpuno nedominirani skup u trenutnoj populaciji, tj. skup svih rešenja od kojih ne postoji bolje rešenje u svim ciljevima. Drugi front sadrži jedinke koje su dominirane samo od strane jedinki iz prvog fronta, i tako dalje. Svakoj jedinki se dodeljuje rang na osnovu fronta kojem pripadaju - one iz prvog fronta dobijaju rang 1, iz drugog 2, i tako dalje.
+Pored ranga, svaka jedinka ima i novi parametar - \textit{distanca gužve} (engl. \textit{crowding distance}). To je mera koja se koristi za održavanje raznolikosti između rešenja unutar jednog pareto fronta. Predstavlja meru bliskosti jedinke njenim susedima. Veća prosečna distanca gužve rezultira boljom raznovrsnošću u populaciji. Favorizuje manje naseljene regione.
+Primarni kriterijum za selekciju je rang. Ako dve jedinke imaju isti rang, preferira se ona sa većom distancom gužve.
+Ovaj pristup osigurava da algoritam održava i intenzifikaciju (kroz rang) i diverzifikaciju (kroz distancu gužve).
+Roditelji se biraju iz populacije koristeći turnirsku selekciju. Odabrana populacija generiše potomke pomoću operacija ukrštanja i mutacije, koje će biti detaljnije opisane u narednom poglavlju.
+Populacija, zajedno sa trenutnom populacijom i trenutnim potomcima, ponovo se sortira prema principu nedominacije, i samo se najboljih N jedinki selektuje, gde je N veličina populacije. Selekcija se zasniva na rangu i distanci gužve u poslednjem pareto frontu.
 
 \section{Opis mog rešenja}
 Moje rešenje - implementacija
@@ -44,12 +92,9 @@ Kritički osvrt na sve što je urađeno i eventualni pravci daljeg unapređivanj
 \renewcommand{\refname}{Literatura}
 \begin{thebibliography}{10}
 \bibliographystyle{unsrt}
-\bibitem{p1} Predrag Janičić, Filip Marić: \emph{Programiranje 1}. Matematički fakultet, Beograd, 2015. 
-\bibitem{istorija} History of IBM at:\\ \url{https://www.ibm.com/ibm/history/history/history_intro.html} 
-\bibitem{univac} About Univac at:\\ \url{https://www.britannica.com/technology/UNIVAC} 
-\bibitem{lit1} What happend to IBM?\\ \url{https://www.thecoldwire.com/what-happened-to-ibm} 
-\bibitem{ibm} About IBM at: \url{https://www.ibm.com/academic/home} 
-\bibitem{timeline} IBM timeline at: \url{www.thoughtco.com/ibm-timeline-1992491}
+\bibitem{ieee} A Fast and Elitist Multiobjective Genetic Algorithm:
+NSGA-II at:\\ \url{https://ieeexplore.ieee.org/abstract/document/996017} 
+\bibitem{aravind seshadri} A fast elitist multiobjective genetic algorithm at:\\ \url{https://www.academia.edu/download/53297141/NSGA_II.pdf} 
 
 \end{thebibliography}
 
