@@ -165,18 +165,236 @@ Ova funkcija izračunava distancu gužve za svaku jedinku u Pareto frontu, koris
 \end{algorithmic}
 
 \subsection{Selekcija}
+U implementaciji je korišćena turnirsku selekciju. Bira se k nasumičnih jedinki iz populacije, i vraća se najbolja od njih. Kriterijum za određivanje najbolje jedinke je na osnovu ranga - što manji rang - to je bolja jedinka. Ako dve jedinke imaju isti rang, bolja je ona koja ima veću distancu gužve.
 
 \subsection{Ukrštanje}
+Zbog testiranja funkcije nad neprekidnim vrednostima, koristimo poseban algoritam ukrštanja: \textbf{SBX} (engl. \textit{Simulated Binary Crossover}). 
+Cilj SBX-a je da simulira ponašanje jednodelnog binarnog ukrštanja, ali u prostoru realnih brojeva. Njegova glavna prednost je kontrola stepena intenzifikacije i diverzifikacije kroz \textbf{distributivni indeks ukrštanja} ($\eta_c$). 
+
+SBX generiše dve nove jedinke (potomke) na osnovu dva roditelja, gde vrednosti gena potomaka leže između ili blizu vrednosti gena roditelja. Veća vrednost $\eta_c$ dovodi do stvaranja potomaka bližih roditeljima (podstiče intenzifikaciju), dok manja vrednost omogućava šire istraživanje prostora rešenja (podstiče diverzifikaciju).
+Tipične vrednosti za $\eta_c$ su u opsegu od 5 do 20, ali konkretan izbor zavisi od prirode problema i ciljeva optimizacije.
+
+U implementaciji koristimo uniformno ukrštanje - gde se za svaki gen jedinke sa verovatnoćom 0.5 računa nova vrednost gena za potomke koristeći SBX formulu.
+
+%TODO mozda dodati primer upotrebe SBX, sliku
+
+\subsubsection*{Koraci algoritma za SBX ukrštanje}
+\begin{enumerate}
+    \item \textbf{Inicijalizacija i iteracija po genima:}
+    \begin{itemize}
+        \item Veličina hromozoma ($n$) određuje se kao dužina atributa \texttt{code} roditelja.
+        \item Algoritam iterira kroz svaki gen (poziciju) hromozoma.
+    \end{itemize}
+    
+    \item \textbf{Verovatnoća ukrštanja:}
+    \begin{itemize}
+        \item Sa verovatnoćom 50\% ($random.random() \leq 0.5$), algoritam računa nove vrednosti gena za potomke koristeći SBX formulu.
+        \item Ako ukrštanje ne treba da se desi, potomci direktno nasleđuju gene roditelja.
+    \end{itemize}
+    
+    \item \textbf{Računanje parametra $\beta_k$:}
+    \begin{itemize}
+    	\item $\beta_k$ određuje proporciju ukrštanja
+        \item Generiše se uniformni slučajan broj $u \in [0,1]$.
+        \item Ako je $u \leq 0.5$, računa se:
+        \[
+        \beta_k = (2u)^{\frac{1}{\eta_c + 1}}
+        \]
+        \item Inače, računa se:
+        \[
+        \beta_k = \left(\frac{1}{2(1-u)}\right)^{\frac{1}{\eta_c + 1}}
+        \]
+    \end{itemize}
+    
+    \item \textbf{Generisanje gena za potomke:}
+    \begin{itemize}
+        \item Koristeći $\beta_k$, potomci nasleđuju kombinacije roditeljskih gena prema sledećim formulama:
+        \[
+        child1[i] = 0.5 \times ((1 + \beta_k) \times parent1[i] + (1 - \beta_k) \times parent2[i])
+        \]
+        \[
+        child2[i] = 0.5 \times ((1 - \beta_k) \times parent1[i] + (1 + \beta_k) \times parent2[i])
+        \]
+    \end{itemize}
+    
+    \item \textbf{Ograničenje vrednosti gena:}
+    \begin{itemize}
+        \item Osigurava se da svaki gen potomaka ostane u opsegu $[0,1]$ pomoću:
+        \[
+        child.code[i] = \min(\max(child.code[i], 0), 1)
+        \]
+    \end{itemize}
+\end{enumerate}
+
 
 \subsection{Mutacija}
+U ovom radu koristimo \textbf{polinomijalnu mutaciju} (engl. \textit{Polynomial Mutation}), koja je popularna tehnika u evolutivnim algoritmima za probleme sa realnim vrednostima. Njen cilj je da unese dovoljno varijacije u populaciju kako bi se omogućilo efikasnije pretraživanje prostora rešenja i izbegavanje lokalnih ekstremuma.
 
-\subsection{Algoritam}
+Polinomijalna mutacija funkcioniše tako što modifikuje gene jedinke u skladu sa slučajnim brojem $r \in (0,1)$ i distribucionim indeksom mutacije $\eta_m$. Veće vrednosti $\eta_m$ dovode do manjih promena u vrednostima gena, dok manje vrednosti omogućavaju veće promene, čime se podstiče istraživanje šireg prostora rešenja. 
 
-\subsection{Test primeri}
+\subsubsection*{Koraci algoritma za polinomijalnu mutaciju}
+\begin{enumerate}
+    \item \textbf{Iteracija kroz gene jedinke:}
+    \begin{itemize}
+        \item Algoritam prolazi kroz svaki gen $i$ hromozoma jedinke.
+        \item Verovatnoća mutacije za svaki gen je definisana parametrom $p$.
+    \end{itemize}
 
+    \item \textbf{Generisanje slučajnog broja $r$:}
+    \begin{itemize}
+        \item Ako $random.random() < p$, gen se menja.
+        \item Generiše se uniformno slučajan broj $r \in (0,1)$.
+    \end{itemize}
+
+    \item \textbf{Računanje promene $\Delta_q$:}
+    \begin{itemize}
+        \item Ako je $r < 0.5$, računa se:
+        \[
+        \Delta_q = (2r)^{\frac{1}{\eta_m + 1}} - 1
+        \]
+        \item Ako je $r \geq 0.5$, računa se:
+        \[
+        \Delta_q = 1 - (2(1 - r))^{\frac{1}{\eta_m + 1}}
+        \]
+    \end{itemize}
+
+    \item \textbf{Ažuriranje gena:}
+    \begin{itemize}
+        \item Gen se ažurira dodavanjem $\Delta_q$:
+        \[
+        child.code[i] \mathrel{+}= \Delta_q
+        \]
+        \item Osigurava se da gen ostane u opsegu $[0,1]$:
+        \[
+        child.code[i] = \min(\max(child.code[i], 0), 1)
+        \]
+    \end{itemize}
+\end{enumerate}
+
+Efikasnost polinomijalne mutacije zavisi od pravilnog izbora parametara $p$ i $\eta_m$. U ovom radu koristimo $\eta_m = 20$, što omogućava umeren stepen promene vrednosti gena, dok verovatnoća mutacije $p$ zavisi od specifičnog problema i ciljeva optimizacije.
+
+\subsection{Implementacija algoritma NSGA-II}
+U nastavku je prikazana implementacija algoritma NSGA-II u programskom jeziku Python. Implementacija sledi osnovne korake algoritma opisane u prethodnom delu, uz dodatne detalje vezane za parametre i funkcionalnost. 
+
+\subsubsection*{Parametri funkcije \texttt{nsga2}}
+\begin{itemize}
+    \item \texttt{population\_size}: Broj jedinki u populaciji.
+    \item \texttt{num\_variables}: Broj promenljivih koje definišu svaku jedinku.
+    \item \texttt{num\_generations}: Broj generacija (iteracija algoritma).
+    \item \texttt{tournament\_size}: Broj jedinki uključenih u turnirsku selekciju.
+    \item \texttt{mutation\_prob}: Verovatnoća mutacije za svaki gen jedinke.
+    \item \texttt{elitism\_size}: Broj najboljih jedinki koje se direktno prenose u narednu generaciju.
+    \item \texttt{objective\_function}: Ciljna funkcija koja se koristi za evaluaciju svake jedinke.
+\end{itemize}
+
+\subsubsection*{Opis implementacije}
+Algoritam se sastoji od sledećih koraka:
+\begin{enumerate}
+    \item \textbf{Inicijalizacija populacije:} 
+    Početna populacija se generiše nasumično. Svaka jedinka se inicijalizuje sa brojem promenljivih \texttt{num\_variables}, a njena vrednost ciljne funkcije se računa pomoću funkcije \texttt{objective\_function}.
+    
+    \item \textbf{Sortiranje prema dominaciji:} 
+    Na početku svake iteracije populacija se sortira u Pareto frontove koristeći funkciju \texttt{non\_dominated\_sorting}. Svakom frontu se dodeljuje rang, a jedinkama unutar frontova računa se distanca gužve (\textit{crowding distance}) radi održavanja raznovrsnosti rešenja.
+    
+    \item \textbf{Elitizam:} 
+    Najboljih \texttt{elitism\_size} jedinki prenosi se direktno u sledeću generaciju. Ovaj pristup osigurava očuvanje najboljih rešenja tokom evolucije.
+    
+    \item \textbf{Selekcija roditelja:} 
+    Roditelji se biraju korišćenjem turnirske selekcije, gde su jedinke sa manjim rangom i većom distancom gužve preferirane. Ovo osigurava da se favorizuju kvalitetna i raznovrsna rešenja.
+    
+    \item \textbf{Generisanje potomaka:} 
+    Nad izabranim roditeljima se primenjuje ukrštanje i polinomijalna mutacija kako bi se generisale nove jedinke. Mutacija se primenjuje sa verovatnoćom \texttt{mutation\_prob}.
+    
+    \item \textbf{Ažuriranje populacije:} 
+    Kombinovanjem trenutne populacije i potomaka kreira se nova populacija veličine \texttt{population\_size}. Selekcija novih jedinki se vrši na osnovu ranga i distance gužve.
+    
+    \item \textbf{Vizualizacija rezultata:} 
+    Nakon završetka iteracija, krajnji Pareto front se prikazuje grafički kako bi se vizualizovala raspodela rešenja.
+\end{enumerate}
 
 \section{Eksperimentalni rezultati}
-Moji rezultati - grafici
+U ovoj sekciji su predstavljeni rezultati NSGA-II algoritma za ciljne funkcije \( ZDT1 \), \( ZDT2 \), i \( ZDT3 \). Ove funkcije su standardni benchmark testovi u višeciljnoj optimizaciji.
+%TODO dodati jos neke funkcije!!
+
+\subsection{Opis ciljnih funkcija}
+\subsubsection*{ZDT1}
+Pareto front ove funkcije je konveksan, što je čini jednostavnom za optimizaciju. Glavni cilj je testiranje sposobnosti algoritma da pronađe ravnomerno raspodeljena rešenja na frontu.
+\[
+\begin{aligned}
+    f_1(x) &= x_1, \\
+    f_2(x) &= g(x) \cdot \left(1 - \sqrt{\frac{f_1(x)}{g(x)}}\right),
+\end{aligned}
+\]
+gde je:
+\[
+g(x) = 1 + \frac{9}{n-1} \sum_{i=2}^n x_i,
+\]
+i \( x_1 \in [0, 1] \), \( x_i \in [0, 1] \) za \( i = 2, 3, \dots, n \).
+\[\]
+
+\subsubsection*{ZDT2}
+Ova funkcija ima konkavan Pareto front, što je izazovnije u poređenju sa ZDT1.
+\[
+\begin{aligned}
+    f_1(x) &= x_1, \\
+    f_2(x) &= g(x) \cdot \left(1 - \left(\frac{f_1(x)}{g(x)}\right)^2\right),
+\end{aligned}
+\]
+gde je:
+\[
+g(x) = 1 + \frac{9}{n-1} \sum_{i=2}^n x_i,
+\]
+i \( x_1 \in [0, 1] \), \( x_i \in [0, 1] \) za \( i = 2, 3, \dots, n \).
+
+\subsubsection*{ZDT3}
+Pareto front je isprekidan i sastoji se od više nepovezanih delova, što predstavlja dodatni izazov za algoritam u održavanju raznovrsnosti.
+\[
+\begin{aligned}
+    f_1(x) &= x_1, \\
+    f_2(x) &= g(x) \cdot \left(1 - \sqrt{\frac{f_1(x)}{g(x)}} - \frac{f_1(x)}{g(x)} \cdot \sin(10\pi f_1(x))\right),
+\end{aligned}
+\]
+gde je:
+\[
+g(x) = 1 + \frac{9}{n-1} \sum_{i=2}^n x_i,
+\]
+i \( x_1 \in [0, 1] \), \( x_i \in [0, 1] \) za \( i = 2, 3, \dots, n \).
+
+
+\subsection{Parametri algoritma}
+Eksperimenti su sprovedeni sa sledećim parametrima:
+\begin{itemize}
+    \item Veličina populacije: \( 100 \)
+    \item Broj generacija: \( 200 \)
+    \item Veličina turnira: \( 3 \)
+    \item Verovatnoća mutacije: \( 0.1 \)
+    \item Broj promenljivih: \( 30 \)
+    \item Broj elitnih rešenja: \( 10 \)
+\end{itemize}
+
+\subsection{Rezultati za ZDT1 funkciju}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/zdt1.png}
+    \caption{Pareto front za \( ZDT1 \) funkciju dobijen NSGA-II algoritmom.}
+    \label{fig:zdt1_results}
+\end{figure}
+
+\subsection{Rezultati za ZDT2 funkciju}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/zdt2.png}
+    \caption{Pareto front za \( ZDT2 \) funkciju dobijen NSGA-II algoritmom.}
+    \label{fig:zdt2_results}
+\end{figure}
+
+\subsection{Rezultati za ZDT3 funkciju}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/zdt3.png}
+    \caption{Pareto front za \( ZDT3 \) funkciju dobijen NSGA-II algoritmom.}
+    \label{fig:zdt3_results}
+\end{figure}
 
 \section{Poređenje mojih rezultata i onih iz literature}
 Poređenje rezultata - vizuelno i tekstualno
