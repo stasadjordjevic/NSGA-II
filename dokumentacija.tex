@@ -397,7 +397,52 @@ Eksperimenti su sprovedeni sa sledećim parametrima:
 \end{figure}
 
 \section{Poređenje mojih rezultata i onih iz literature}
-Poređenje rezultata - vizuelno i tekstualno
+Za poređenje mog rešenja sa onim iz literature (ili pymoo), koristiću nekoliko metrika koje omogućavaju objektivnu procenu kvaliteta rešenja:
+\cite{gete-plots}
+\begin{enumerate} 
+	\item {Hipervolumen (HV)} 
+	\item {Maksimalni raspon (MS)} 
+	\item {Broj nedominantnih rešenja na krajevima Pareto fronta} 
+	\item {Uniformnost distribucije rešenja} 
+\end{enumerate}
+
+\subsection{Hipervolumen (HV)}
+Hipervolumen meri oblast pokrivenu rešenjima na Pareto frontu u višedimenzionalnom prostoru. Za dva cilja, to je površina između tačaka na Pareto frontu i referentne tačke, koja se nalazi izvan dometa svih rešenja, često sa većim vrednostima nego što je moguće dostići.
+   
+Formule za izračunavanje hipervolumena su sledeće:
+
+- Površina između dve uzastopne tačke na Pareto frontu:
+  \[
+  \text{Površina} = \text{Širina} \times \text{Visina}
+  \]
+  gde je širina razlika između vrednosti prvog cilja (\( f_1 \)) dve tačke, a visina je prosečna visina između vrednosti drugog cilja (\( f_2 \)).
+
+- Površina između poslednje tačke i referentne tačke:
+  \[
+  \text{Površina poslednje} = (r_1 - f_1) \times (r_2 - f_2)
+  \]
+  gde su \( f_1 \) i \( f_2 \) koordinate poslednje tačke na Pareto frontu, a \( r_1 \) i \( r_2 \) su vrednosti referentne tačke.
+
+Rezultati hipervolumena nam omogućavaju da procenimo efikasnost i uniformnost distribucije rešenja na Pareto frontu. Veći hipervolumen ukazuje na bolji raspored rešenja i bolju pokrivenost prostora ciljeva.
+
+%TODO staviti barove - prikaz hipervolumena mog resenja i literature!! - nakon toga tumacenje
+
+\subsection{Maksimalni raspon (MS)}
+Maksimalni raspon (engl. \textit{maximal spread}) meri udaljenost između najudaljenijih tačaka na Pareto frontu po svakom cilju. Ovo nam daje uvid u to kako su rešenja raspoređena duž fronta, tj. koliko je front širok u svakom cilju.
+
+%TODO staviti barove - prikaz ms mog resenja i literature!!- nakon toga tumacenje
+ 	
+ 	
+\subsection{Broj nedominantnih rešenja na krajevima Pareto fronta}
+Ova metrika pokazuje koliko je algoritam sposoban da pronađe ekstremne vrednosti na krajevima Pareto fronta. Broj nedominiranih rešenja na krajevima Pareto fronta je pokazatelj efikasnosti algoritma u konvergiranju prema optimalnim rešenjima.
+
+
+%TODO [Prebrojavanje broja nedominantnih rešenja na krajevima Pareto fronta u vašem i bibliotečkom rešenju.]- nakon toga tumacenje
+
+\subsection{Unuformnost distribucije rešenja}
+Uniformnost distribucije rešenja na Pareto frontu ukazuje na to koliko su tačke ravnomerno raspoređene. Dobar algoritam treba da postigne visok nivo uniformnosti kako bi osigurao kvalitetan i ravnomerno raspoređen Pareto front.
+
+%TODO plotovi!!- nakon toga tumacenje
 
 \section{Zaključak}
 Kritički osvrt na sve što je urađeno i eventualni pravci daljeg unapređivanja
@@ -412,6 +457,8 @@ NSGA-II at:\\ \url{https://ieeexplore.ieee.org/abstract/document/996017}
 \bibitem{aravind seshadri} A fast elitist multiobjective genetic algorithm at:\\ \url{https://www.academia.edu/download/53297141/NSGA_II.pdf} - ovde algoritam za polinomijalnu mutaciju i sbx - najvise odavde u implementaciji
 \bibitem{ri-kurs} Materijali sa kursa Računarska inteligencija
 \bibitem{sbx} Analyzing the Simulated Binary Crossover Operator in Multi-Objective Evolutionary Algorithms\\ \url{https://www.duo.uio.no/handle/10852/111478} 
+\bibitem{gete-plots} Using Dominated Solutions at Edges to the Diversity and the Uniformity of Non‑dominated Solution Distributionsin NSGA‑II \url{https://www.researchgate.net/publication/362563469_Using_Dominated_Solutions_at_Edges_to_the_Diversity_and_the_Uniformity_of_Non-dominated_Solution_Distributions_in_NSGA-II#fullTextFileContent}
+
 
 \end{thebibliography}
 
