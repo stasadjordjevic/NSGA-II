@@ -1,51 +1,9 @@
 from typing import List, Callable
-
 import numpy as np
-
-def ZDT1(x):
-    n = len(x)  # Number of decision variables
-    f1 = x[0]  # Objective 1 is just the first variable
-    g = 1 + 9 * np.sum(x[1:]) / (n - 1)
-    f2 = g * (1 - np.sqrt(f1 / g))  # Objective 2 formula
-    return f1, f2
-
-
-def ZDT2(x):
-    n = len(x)  # Number of decision variables
-    f1 = x[0]  # Objective 1 is just the first variable
-    g = 1 + 9 * np.sum(x[1:]) / (n - 1)
-    f2 = g * (1 - (f1 / g) ** 2)  # Objective 2 formula
-    return f1, f2
-
-def ZDT3(x):
-    n = len(x)  # Number of decision variables
-    f1 = x[0]  # Objective 1 is just the first variable
-    g = 1 + 9 * np.sum(x[1:]) / (n - 1)  # g function
-    h =  1 - np.sqrt(f1 / g) - (f1 / g) * np.sin(10 * np.pi * f1) # h function
-    f2 = g * h  # Objective 2 formula
-    return f1, f2
-
-#TODO za zdt4 izmeniti crossover i mutation (jos nesto?)
-def ZDT4(x):
-    n = len(x)  # Number of decision variables
-    f1 = x[0]  # Objective 1 is just the first variable
-    g = 1 + 10 * (n - 1) + np.sum(x[1:]**2 - 10 * np.cos(4 * np.pi * x[1:]))  # g function
-    h =  1 - np.sqrt(f1 / g) # h function
-    f2 = g * h  # Objective 2 formula
-    return f1, f2
-
-def ZDT6(x):
-    n = len(x)  # Number of decision variables
-    f1 = 1 - np.exp(-4 * x[0]) * np.sin(6 * np.pi * x[0])**6 # Objective 1 formula
-    g = 1 + 9 * (np.sum(x[1:]) / (n - 1))**0.25  # g function
-    h =  1 - (f1 / g)**2 # h function
-    f2 = g * h  # Objective 2 formula
-    return f1, f2
-
-
 import random
+from copy import deepcopy
 
-num_objectives = 2 #TODO change for different objectives
+num_objectives = 2
 class Individual:
     """
     Individual of genetic algorithm
@@ -118,7 +76,6 @@ def non_dominated_sorting(population: List[Individual]):
     return pareto_fronts
 
 
-from copy import deepcopy
 
 def calculate_crowding_distance(pareto_front: List[Individual], num_objectives: int):
     n = len(pareto_front)
@@ -254,26 +211,5 @@ def nsga2(population_size, num_variables, num_generations,
         population = deepcopy(new_population)
     best_individual = max(population, key=lambda x: (x.rank, -x.crowding_distance))
     
-    # Plotting the final Pareto front
     final_pareto_front = pareto_fronts[0]  # The first front contains the Pareto-optimal solutions
-    pareto_f1_values = [ind.fitness[0] for ind in final_pareto_front]
-    pareto_f2_values = [ind.fitness[1] for ind in final_pareto_front]
-    
     return final_pareto_front
-    # plt.figure(figsize=(8, 6))
-    # plt.scatter(pareto_f1_values, pareto_f2_values, c='red', label='Final Pareto Front')
-    # plt.xlabel('Objective 1 (f1)')
-    # plt.ylabel('Objective 2 (f2)')
-    # plt.title(f"Final pareto front:{objective_function.__name__}")
-    # plt.legend()
-    # plt.grid(True)
-    # plt.show()
-    
-
-
-# nsga2(population_size = 100, num_variables = 30, 
-#       num_generations = 200, tournament_size = 3, 
-#       mutation_prob = 0.1, elitism_size = 10, objective_function=ZDT4)
-
-
-
