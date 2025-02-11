@@ -11,6 +11,7 @@
 \usepackage{geometry}
 \usepackage{algorithm}
 \usepackage{algorithmic}
+\usepackage{subcaption}
 \geometry{a4paper, margin=1in}
 
 \title{Non-dominated Sorting Genetic Algorithm (NSGA-II) \\
@@ -406,18 +407,18 @@ Za poređenje mog rešenja sa onim iz literature (ili pymoo), koristiću nekolik
 	\item {Uniformnost distribucije rešenja} 
 \end{enumerate}
 
-%TODO osisana latinica
+
 U literaturi \cite{gete-plots} algoritam se testirao sa sledećim parametrima:
 \begin{itemize}
-\item population size = 100
+\item veličina populacije = 100
 \item broj generacija = 200 za HV i raspodelu, 300 za MS
-\item ukrstanje - dvopoziciono
-\item verovatnoca ukrstanja = 0.9
+\item ukrštanje - dvopoziciono
+\item verovatnoća ukrštanja = 0.9
 \item mutacija - polinomijalna
-\item verovatnoca mutacije = 0.033
-\item referentna tacka = (1.2, 1.5)
+\item verovatnoća mutacije = 0.033
+\item referentna tačka = (1.2, 1.5)
 \end{itemize}
-
+U našem rešenju, radi verodostojnijeg poređenja, koristićemo iste parametre (gde mogu da budu isti).
 
 \subsection{Hipervolumen (HV)}
 Hipervolumen meri oblast pokrivenu rešenjima na Pareto frontu u višedimenzionalnom prostoru. Za dva cilja, to je površina između tačaka na Pareto frontu i referentne tačke, koja se nalazi izvan dometa svih rešenja, često sa većim vrednostima nego što je moguće dostići.
@@ -438,12 +439,56 @@ Formule za izračunavanje hipervolumena su sledeće:
 
 Rezultati hipervolumena nam omogućavaju da procenimo efikasnost i uniformnost distribucije rešenja na Pareto frontu. Veći hipervolumen ukazuje na bolji raspored rešenja i bolju pokrivenost prostora ciljeva.
 
-%TODO staviti barove - prikaz hipervolumena mog resenja i literature!! - nakon toga tumacenje
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/hv_zdt1.png}
+    \caption{Poređenje hipervolumena za \( ZDT1 \) funkciju.}
+    \label{fig:hv_zdt1}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/hv_zdt2.png}
+    \caption{Poređenje hipervolumena za \( ZDT2 \) funkciju.}
+    \label{fig:hv_zdt2}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/hv_zdt3.png}
+    \caption{Poređenje hipervolumena za \( ZDT3 \) funkciju.}
+    \label{fig:hv_zdt3}
+\end{figure}
+
+
+%TODO tumacenje
 
 \subsection{Maksimalni raspon (MS)}
 Maksimalni raspon (engl. \textit{maximal spread}) meri udaljenost između najudaljenijih tačaka na Pareto frontu po svakom cilju. Ovo nam daje uvid u to kako su rešenja raspoređena duž fronta, tj. koliko je front širok u svakom cilju.
 
-%TODO staviti barove - prikaz ms mog resenja i literature!!- nakon toga tumacenje
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/ms_zdt1.png}
+    \caption{Poređenje maksimalnog raspona za \( ZDT1 \) funkciju.}
+    \label{fig:ms_zdt1}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/ms_zdt2.png}
+    \caption{Poređenje maksimalnog raspona za \( ZDT2 \) funkciju.}
+    \label{fig:ms_zdt2}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/ms_zdt3.png}
+    \caption{Poređenje maksimalnog raspona za \( ZDT3 \) funkciju.}
+    \label{fig:ms_zdt3}
+\end{figure}
+
+
+%TODO tumacenje
  	
  	
 \subsection{Broj nedominantnih rešenja na krajevima Pareto fronta}
@@ -455,7 +500,28 @@ Ova metrika pokazuje koliko je algoritam sposoban da pronađe ekstremne vrednost
 \subsection{Unuformnost distribucije rešenja}
 Uniformnost distribucije rešenja na Pareto frontu ukazuje na to koliko su tačke ravnomerno raspoređene. Dobar algoritam treba da postigne visok nivo uniformnosti kako bi osigurao kvalitetan i ravnomerno raspoređen Pareto front.
 
-%TODO plotovi!!- nakon toga tumacenje
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/pareto_zdt1.png}
+    \caption{Poređenje distribucije rešenja za \( ZDT1 \) funkciju.}
+    \label{fig:pareto_zdt1}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/pareto_zdt2.png}
+    \caption{Poređenje distribucije rešenja za \( ZDT2 \) funkciju.}
+    \label{fig:pareto_zdt2}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/pareto_zdt3.png}
+    \caption{Poređenje distribucije rešenja za \( ZDT3 \) funkciju.}
+    \label{fig:pareto_zdt3}
+\end{figure}
+
+%TODO tumacenje
 
 \section{Zaključak}
 Kritički osvrt na sve što je urađeno i eventualni pravci daljeg unapređivanja
