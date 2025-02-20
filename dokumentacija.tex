@@ -18,16 +18,13 @@
 \normalsize Seminarski rad u okviru kursa\\ Računarska inteligencija
 \\Matematički fakultet}
 \author{Staša Đorđević}
-\date{\today} %TODO update date?
+\date{\today} 
 
 \begin{document}
 
 \maketitle
 
-%sadrzaj?? da li mi treba uopste
-\begin{abstract}
-Sažetak ako treba?
-\end{abstract}
+\tableofcontents
 
 \section{Uvod u genetske algoritme}
 Genetski algoritmi predstavljaju grupu optimizacionih metoda koje se zasnivaju na principima prirodne selekcije i evolucije. Inspirisani su biološkim procesima kao što su selekcija, ukrštanje (kroz reprodukciju), mutacija i nasleđivanje, koji omogućavaju preživljavanje i adaptaciju organizama u prirodi. Slično tome, osnovni koraci u implementaciji genetskih algoritama uključuju selekciju, ukrštanje i mutaciju. Ovi koraci se ponavljaju kroz više generacija kako bi se iz populacije rešenja razvila najbolja moguća rešenja za dati problem.
@@ -44,7 +41,7 @@ Genetski algoritmi predstavljaju grupu optimizacionih metoda koje se zasnivaju n
         \item \textbf{Višepoziciono ukrštanje} - Ova metoda koristi više tačaka preseka na genomima roditelja, što omogućava veću raznovrsnost u potomcima.
         \item \textbf{Uniformno ukrštanje} - U ovoj varijanti, gene sa oba roditelja se nasumično kombinuju kako bi se stvorio potomak, bez fiksnih tačaka preseka.
     \end{enumerate}
-    \item \textbf{Mutacija} se koristi da bi se unela nasumična promena u genetski kod jedinke, što omogućava istraživanje novih mogućnosti i sprečava algoritam da se "zaglavi" u lokalnim ekstemumima.
+    \item \textbf{Mutacija} se koristi da bi se unela nasumična promena u genetski kod jedinke, što omogućava istraživanje novih mogućnosti i sprečava algoritam da se 'zaglavi' u lokalnim ekstemumima.
 \end{itemize}
 
 \textbf{Elitizam} je metoda koja garantuje da će najbolje jedinke iz trenutne generacije biti prenete u sledeću generaciju bez promena. Elitizam se koristi kako bi se sprečilo da se najbolja rešenja izgube tokom evolucije.
@@ -74,14 +71,12 @@ Rešenje se smatra \textbf{dominiranim} (engl. \textit{dominated}) u odnosu na d
 Kratak opis algoritma:
 Prvo se populacija inicijalizuje na standardan način, u skladu sa problemom koji rešavamo. Nakon toga, jedinke u njoj se sortiraju po frontovima prema principu nedominacije. Prvi front je potpuno nedominirani skup u trenutnoj populaciji, tj. skup svih rešenja od kojih ne postoji bolje rešenje u svim ciljevima. Drugi front sadrži jedinke koje su dominirane samo od strane jedinki iz prvog fronta, i tako dalje. Svakoj jedinki se dodeljuje rang na osnovu fronta kojem pripadaju - one iz prvog fronta dobijaju rang 1, iz drugog 2, i tako dalje.
 Pored ranga, svaka jedinka ima i novi parametar - \textit{distanca gužve} (engl. \textit{crowding distance}). To je mera koja se koristi za održavanje raznolikosti između rešenja unutar jednog pareto fronta. Predstavlja meru bliskosti jedinke njenim susedima. Veća prosečna distanca gužve rezultira boljom raznovrsnošću u populaciji. Favorizuje manje naseljene regione. Nakon sortiranja, unutar svakog fronta, računa se distanca gužve za jedinke u tom frontu.
-Primarni kriterijum za selekciju je rang. Ako dve jedinke imaju isti rang, preferira se ona sa većom distancom gužve.
+Primarni kriterijum za selekciju je rang. Ako dve jedinke imaju isti rang, bolja je ona sa većom distancom gužve.
 Ovaj pristup osigurava da algoritam održava i intenzifikaciju (kroz rang) i diverzifikaciju (kroz distancu gužve).
 Roditelji se biraju iz populacije koristeći turnirsku selekciju. Odabrana populacija generiše potomke pomoću operacija ukrštanja i mutacije, koje će biti detaljnije opisane u narednom poglavlju.
 Populacija, zajedno sa trenutnom populacijom i trenutnim potomcima, ponovo se sortira prema principu nedominacije, i samo se najboljih N jedinki selektuje, gde je N veličina populacije. Selekcija se zasniva na rangu i distanci gužve u poslednjem pareto frontu.
 
 \section{Opis mog rešenja}
-Moje rešenje - implementacija
-opis 
 \subsection{Grupisanje u pareto frontove - sortiranje}
 Ovaj algoritam koristi metod nedominiranog sortiranja da bi organizovao populaciju u Pareto frontove. U prvom koraku se inicijalizuje broj dominacija i lista dominiranih jedinki za svaku jedinku. Zatim, kroz dvostruki for petlju, algoritam poredi svaku jedinku sa svim ostalim u populaciji i ažurira broj dominacija i listu dominiranih jedinki. Nakon što su svi odnosi dominacije utvrđeni, jedinke se grupišu u Pareto frontove prema njihovoj dominaciji. Nakon što je jedinka pridružena određenom Pareto frontu, dodeljuje joj se rang na osnovu njega, koji će nam kasnije koristiti u selekciji.
 
@@ -169,15 +164,13 @@ Ova funkcija izračunava distancu gužve za svaku jedinku u Pareto frontu, koris
 U implementaciji je korišćena turnirsku selekciju. Bira se k nasumičnih jedinki iz populacije, i vraća se najbolja od njih. Kriterijum za određivanje najbolje jedinke je na osnovu ranga - što manji rang - to je bolja jedinka. Ako dve jedinke imaju isti rang, bolja je ona koja ima veću distancu gužve.
 
 \subsection{Ukrštanje}
-Zbog testiranja funkcije nad neprekidnim vrednostima, koristimo poseban algoritam ukrštanja: \textbf{SBX} (engl. \textit{Simulated Binary Crossover}). 
+Zbog testiranja algoritma nad funkcijama koje koriste neprekidne vrednosti, koristimo poseban algoritam ukrštanja: \textbf{SBX} (engl. \textit{Simulated Binary Crossover}). 
 Cilj SBX-a je da simulira ponašanje jednodelnog binarnog ukrštanja, ali u prostoru realnih brojeva. Njegova glavna prednost je kontrola stepena intenzifikacije i diverzifikacije kroz \textbf{distributivni indeks ukrštanja} ($\eta_c$). 
 
 SBX generiše dve nove jedinke (potomke) na osnovu dva roditelja, gde vrednosti gena potomaka leže između ili blizu vrednosti gena roditelja. Veća vrednost $\eta_c$ dovodi do stvaranja potomaka bližih roditeljima (podstiče intenzifikaciju), dok manja vrednost omogućava šire istraživanje prostora rešenja (podstiče diverzifikaciju).
 Tipične vrednosti za $\eta_c$ su u opsegu od 5 do 20, ali konkretan izbor zavisi od prirode problema i ciljeva optimizacije.
 
 U implementaciji koristimo uniformno ukrštanje - gde se za svaki gen jedinke sa verovatnoćom 0.5 računa nova vrednost gena za potomke koristeći SBX formulu.
-
-%TODO mozda dodati primer upotrebe SBX, sliku
 
 \subsubsection*{Koraci algoritma za SBX ukrštanje}
 \begin{enumerate}
@@ -275,7 +268,7 @@ Polinomijalna mutacija funkcioniše tako što modifikuje gene jedinke u skladu s
 Efikasnost polinomijalne mutacije zavisi od pravilnog izbora parametara $p$ i $\eta_m$. U ovom radu koristimo $\eta_m = 20$, što omogućava umeren stepen promene vrednosti gena, dok verovatnoća mutacije $p$ zavisi od specifičnog problema i ciljeva optimizacije.
 
 \subsection{Implementacija algoritma NSGA-II}
-U nastavku je prikazana implementacija algoritma NSGA-II u programskom jeziku Python. Implementacija sledi osnovne korake algoritma opisane u prethodnom delu, uz dodatne detalje vezane za parametre i funkcionalnost. 
+Implementacija sledi osnovne korake algoritma opisane u prethodnom delu, uz dodatne detalje vezane za parametre i funkcionalnost. 
 
 \subsubsection*{Parametri funkcije \texttt{nsga2}}
 \begin{itemize}
@@ -315,7 +308,6 @@ Algoritam se sastoji od sledećih koraka:
 
 \section{Eksperimentalni rezultati}
 U ovoj sekciji su predstavljeni rezultati NSGA-II algoritma za ciljne funkcije \( ZDT1 \), \( ZDT2 \), i \( ZDT3 \). Ove funkcije su standardni benchmark testovi u višeciljnoj optimizaciji.
-%TODO dodati jos neke funkcije!!
 
 \subsection{Opis ciljnih funkcija}
 \subsubsection*{ZDT1}
@@ -361,53 +353,15 @@ g(x) = 1 + \frac{9}{n-1} \sum_{i=2}^n x_i,
 \]
 i \( x_1 \in [0, 1] \), \( x_i \in [0, 1] \) za \( i = 2, 3, \dots, n \).
 
-
-\subsection{Parametri algoritma}
-Eksperimenti su sprovedeni sa sledećim parametrima:
-\begin{itemize}
-    \item Veličina populacije: \( 100 \)
-    \item Broj generacija: \( 200 \)
-    \item Veličina turnira: \( 3 \)
-    \item Verovatnoća mutacije: \( 0.1 \)
-    \item Broj promenljivih: \( 30 \)
-    \item Broj elitnih rešenja: \( 10 \)
-\end{itemize}
-
-\subsection{Rezultati za ZDT1 funkciju}
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.7\textwidth]{images/zdt1.png}
-    \caption{Pareto front za \( ZDT1 \) funkciju dobijen NSGA-II algoritmom.}
-    \label{fig:zdt1_results}
-\end{figure}
-
-\subsection{Rezultati za ZDT2 funkciju}
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.7\textwidth]{images/zdt2.png}
-    \caption{Pareto front za \( ZDT2 \) funkciju dobijen NSGA-II algoritmom.}
-    \label{fig:zdt2_results}
-\end{figure}
-
-\subsection{Rezultati za ZDT3 funkciju}
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.7\textwidth]{images/zdt3.png}
-    \caption{Pareto front za \( ZDT3 \) funkciju dobijen NSGA-II algoritmom.}
-    \label{fig:zdt3_results}
-\end{figure}
-
 \section{Poređenje mojih rezultata i onih iz literature}
-Za poređenje mog rešenja sa onim iz literature (ili pymoo), koristiću nekoliko metrika koje omogućavaju objektivnu procenu kvaliteta rešenja:
-\cite{gete-plots}
+Pymoo je optimizaciona biblioteka razvijena u Pythonu, namenjena rešavanju višekriterijumskih optimizacionih problema. Njena implementacija NSGA-II algoritma je dobro optimizovana i široko korišćena u istraživačkim radovima i industrijskim primenama.
+Za poređenje mog rešenja sa rešenjem iz biblioteke pymoo, koristiću nekoliko metrika koje omogućavaju objektivnu procenu kvaliteta rešenja:
 \begin{enumerate} 
 	\item {Hipervolumen (HV)} 
-	\item {Maksimalni raspon (MS)} 
-	\item {Broj nedominantnih rešenja na krajevima Pareto fronta} 
+	\item {Maksimalni raspon (MS)}  
 	\item {Uniformnost distribucije rešenja} 
 \end{enumerate}
-
-
+\
 U literaturi \cite{gete-plots} algoritam se testirao sa sledećim parametrima:
 \begin{itemize}
 \item veličina populacije = 100
@@ -418,7 +372,9 @@ U literaturi \cite{gete-plots} algoritam se testirao sa sledećim parametrima:
 \item verovatnoća mutacije = 0.033
 \item referentna tačka = (1.2, 1.5)
 \end{itemize}
-U našem rešenju, radi verodostojnijeg poređenja, koristićemo iste parametre (gde mogu da budu isti).
+U našem rešenju, koristićemo iste parametre tamo gde mogu da budu isti.
+\\
+Nakon isprobavanja, došla sam do zaključka da je bolje povećati broj generacija. Primetila sam mnogo veća odstupanja kad sam inicijalno stavila da je broj generacija 200. Kada sam promenila da broj generacija bude 500, dobila sam značajno bolje rezultate. Time zaključujem da pymoo algoritam brže konvergira od moje implementacije algoritma.
 
 \subsection{Hipervolumen (HV)}
 Hipervolumen meri oblast pokrivenu rešenjima na Pareto frontu u višedimenzionalnom prostoru. Za dva cilja, to je površina između tačaka na Pareto frontu i referentne tačke, koja se nalazi izvan dometa svih rešenja, često sa većim vrednostima nego što je moguće dostići.
@@ -460,8 +416,7 @@ Rezultati hipervolumena nam omogućavaju da procenimo efikasnost i uniformnost d
     \label{fig:hv_zdt3}
 \end{figure}
 
-
-%TODO tumacenje
+U poređenju hipervolumena između moje implementacije NSGA-II i pymoo implementacije, rezultati pokazuju gotovo identične vrednosti, s tim da je moj hipervolumen za veoma malu vrednost manji u svim testiranim funkcijama, što je i očekivano. To ukazuje na to da je moj algoritam uspešno postigao visok nivo pokrivanja prostora ciljeva, odnosno da je Pareto front ravnomerno raspoređen i da su rešenja dobar odraz kvaliteta.
 
 \subsection{Maksimalni raspon (MS)}
 Maksimalni raspon (engl. \textit{maximal spread}) meri udaljenost između najudaljenijih tačaka na Pareto frontu po svakom cilju. Ovo nam daje uvid u to kako su rešenja raspoređena duž fronta, tj. koliko je front širok u svakom cilju.
@@ -487,17 +442,11 @@ Maksimalni raspon (engl. \textit{maximal spread}) meri udaljenost između najuda
     \label{fig:ms_zdt3}
 \end{figure}
 
-
-%TODO tumacenje
+Rezultati maksimalnog raspona pokazuju da su vrednosti mog NSGA-II algoritma značajno manje u poređenju sa rezultatima pymoo implementacije.
+Ovo sugeriše da su rešenja generisana mojim algoritmom koncentrisanija u užem delu Pareto fronta, dok pymoo postiže bolju pokrivenost u širini.
  	
- 	
-\subsection{Broj nedominantnih rešenja na krajevima Pareto fronta}
-Ova metrika pokazuje koliko je algoritam sposoban da pronađe ekstremne vrednosti na krajevima Pareto fronta. Broj nedominiranih rešenja na krajevima Pareto fronta je pokazatelj efikasnosti algoritma u konvergiranju prema optimalnim rešenjima.
 
-
-%TODO [Prebrojavanje broja nedominantnih rešenja na krajevima Pareto fronta u vašem i bibliotečkom rešenju.]- nakon toga tumacenje
-
-\subsection{Unuformnost distribucije rešenja}
+\subsection{Uniformnost distribucije rešenja}
 Uniformnost distribucije rešenja na Pareto frontu ukazuje na to koliko su tačke ravnomerno raspoređene. Dobar algoritam treba da postigne visok nivo uniformnosti kako bi osigurao kvalitetan i ravnomerno raspoređen Pareto front.
 
 \begin{figure}[H]
@@ -521,22 +470,43 @@ Uniformnost distribucije rešenja na Pareto frontu ukazuje na to koliko su tačk
     \label{fig:pareto_zdt3}
 \end{figure}
 
-%TODO tumacenje
+Poređenje uniformnosti distribucije rešenja na Pareto frontu između moje implementacije NSGA-II i pymoo implementacije pokazuje vrlo slične rezultate, sa minimalnim razlikama u distribuciji rešenja. Grafički prikazi pokazuju da se tačke na Pareto frontu vrlo dobro preklapaju, što ukazuje na to da su rešenja ravnomerno raspoređena.
 
 \section{Zaključak}
-Kritički osvrt na sve što je urađeno i eventualni pravci daljeg unapređivanja
+U ovom radu implementiran je NSGA-II algoritam i upoređen sa postojećom pymoo implementacijom kroz metrike hipervolumena, maksimalnog raspona i uniformnosti distribucije rešenja na Pareto frontu.
+Rezultati analize pokazuju da moja implementacija NSGA-II postiže gotovo identične vrednosti hipervolumena kao pymoo implementacija. Ovo potvrđuje da algoritam uspešno generiše kvalitetna rešenja i pokriva relevantan deo prostora ciljeva.
 
-%TODO srediti literaturu!!
+Međutim, maksimalni raspon rešenja u mojoj implementaciji pokazuje značajno niže vrednosti u poređenju sa pymoo, što sugeriše da se rešenja nalaze u užem delu Pareto fronta. To ukazuje na potencijalno slabiju pokrivenost u širini prostora ciljeva, što može biti posledica parametara selekcije, mutacije ili veličine populacije.
+
+Distribucija rešenja na Pareto frontu je veoma slična između moje i pymoo implementacije, pri čemu su razlike minimalne.
+
+Jedno od ključnih zapažanja tokom eksperimentisanja jeste da povećanje broja generacija značajno utiče na performanse mog algoritma. Inicijalno sam koristila broj generacija 200, kako je navedeno u literaturi, ali su rezultati pokazali veća odstupanja u odnosu na pymoo implementaciju. Kada sam povećala broj generacija na 500, dobila sam značajno bolje rezultate, što sugeriše da pymoo algoritam brže konvergira u odnosu na moju implementaciju.
+\\
+\\
+Mogući pravci daljeg unapređenja uključuju:
+
+\begin{itemize}
+    \item Podešavanje hiperparametara algoritma kako bi se poboljšala širina pokrivenosti Pareto fronta.
+    \item Istraživanje tehnika ubrzanja konvergencije kako bi algoritam dostizao kvalitetna rešenja u manjem broju generacija.
+    \item Proširenje analize na još neke test funkcije i stvarne optimizacione probleme radi bolje procene performansi algoritma.
+	\item Prilagođavanje algoritma za rešavanje diskretnih optimizacionih problema.
+\end{itemize}
+
+Ova analiza pokazuje da je implementirani NSGA-II algoritam konkurentan u odnosu na pymoo rešenje, ali da postoji prostor za poboljšanja, posebno u pogledu brzine konvergencije i širine pokrivenosti Pareto fronta.
+
 \addcontentsline{toc}{section}{Literatura}
 \renewcommand{\refname}{Literatura}
 \begin{thebibliography}{10}
 \bibliographystyle{unsrt}
-\bibitem{ieee} A Fast and Elitist Multiobjective Genetic Algorithm:
-NSGA-II at:\\ \url{https://ieeexplore.ieee.org/abstract/document/996017} 
-\bibitem{aravind seshadri} A fast elitist multiobjective genetic algorithm at:\\ \url{https://www.academia.edu/download/53297141/NSGA_II.pdf} - ovde algoritam za polinomijalnu mutaciju i sbx - najvise odavde u implementaciji
-\bibitem{ri-kurs} Materijali sa kursa Računarska inteligencija
-\bibitem{sbx} Analyzing the Simulated Binary Crossover Operator in Multi-Objective Evolutionary Algorithms\\ \url{https://www.duo.uio.no/handle/10852/111478} 
-\bibitem{gete-plots} Using Dominated Solutions at Edges to the Diversity and the Uniformity of Non‑dominated Solution Distributionsin NSGA‑II \url{https://www.researchgate.net/publication/362563469_Using_Dominated_Solutions_at_Edges_to_the_Diversity_and_the_Uniformity_of_Non-dominated_Solution_Distributions_in_NSGA-II#fullTextFileContent}
+\bibitem{ieee} K. Deb, A. Pratap, S. Agarwal, and T. Meyarivan, \textit{A fast and elitist multiobjective genetic algorithm: NSGA-II}, \url{https://ieeexplore.ieee.org/abstract/document/996017}
+
+\bibitem{sbx-poly-impl} A. Seshadri, \textit{A fast elitist multiobjective genetic algorithm}, \url{https://www.academia.edu/download/53297141/NSGA_II.pdf}
+
+\bibitem{ri-kurs} Materijali sa kursa \textit{Računarska inteligencija}, Matematički fakultet, Univerzitet u Beogradu
+
+\bibitem{sbx} M. M. N. Rafstedt, \textit{Analyzing the Simulated Binary Crossover Operator in Multi-Objective Evolutionary Algorithms}, \url{https://www.duo.uio.no/handle/10852/111478}
+
+\bibitem{gete-plots} Y. Sato and M. Sato, \textit{Using Dominated Solutions at Edges to the Diversity and the Uniformity of Non‑dominated Solution Distributions in NSGA‑II}, \url{https://www.researchgate.net/publication/362563469_Using_Dominated_Solutions_at_Edges_to_the_Diversity_and_the_Uniformity_of_Non-dominated_Solution_Distributions_in_NSGA-II#fullTextFileContent}
 
 
 \end{thebibliography}
