@@ -2,7 +2,6 @@ from typing import List, Callable
 import numpy as np
 import random
 from copy import deepcopy
-# from test_functions import ZDT4
 
 num_objectives = 2
 class Individual:
@@ -12,12 +11,6 @@ class Individual:
     fitness - quality of the solution
     """
     def __init__(self, num_variables: int, objective_function: Callable[[np.ndarray], tuple]):
-        # if objective_function==ZDT4:
-        #     self.code = np.zeros(num_variables)
-        #     self.code[0] = np.random.uniform(0, 1)
-        #     self.code[1:] = np.random.uniform(-5, 5, num_variables - 1) 
-        # else:
-        #     self.code = np.random.uniform(0, 1, num_variables)
         self.code = np.random.uniform(0, 1, num_variables)
         self.rank = None
         self.crowding_distance = None
@@ -29,7 +22,6 @@ class Individual:
         
 
 def dominates(first_individual, second_individual):
-    # todo mozda dodati toleranciju?
     is_better_in_all = True
     is_strictly_better = False
 
@@ -95,7 +87,7 @@ def calculate_crowding_distance(pareto_front: List[Individual], num_objectives: 
             if f_max != f_min:
                 distance = (pareto_front[k+1].fitness[i] - pareto_front[k-1].fitness[i])/(f_max - f_min)
             else:
-                distance = 0 #check
+                distance = 0
             pareto_front[k].crowding_distance += distance
         
 
@@ -105,9 +97,9 @@ def selection(population: List[Individual], k: int):
     1. Choose random k individuals from the population
     2. The best of those k wins the tournament and is selected for crossover
 
-    Primarni kriterijum za selekciju je rang. 
-    Ako dve jedinke imaju isti rang, 
-    preferira se ona sa većom distancom gužve.
+    The primary criterion for selection is rank.
+    If two individuals have the same rank,
+    the one with the higher crowding distance is preferred.
     """
     k = min(len(population), k)
     participants = random.sample(population, k)
@@ -137,7 +129,6 @@ def crossover(parent1: Individual, parent2: Individual, child1: Individual, chil
         # Ensure values remain in [0,1]
         child1.code[i] = min(max(child1.code[i],0),1)
         child2.code[i] = min(max(child2.code[i],0),1)
-        #TODO change for zdt4 [-5,5]
         
             
 
@@ -158,7 +149,6 @@ def mutation(child: Individual, p: float, eta_m = 20):
             child.code[i] += delta_q
             # ensure value remain in [0,1]
             child.code[i] = min(max(child.code[i], 0), 1)
-            #TODO change for zdt4 [-5,5]
 
 
 

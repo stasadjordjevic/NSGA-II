@@ -472,13 +472,23 @@ Uniformnost distribucije rešenja na Pareto frontu ukazuje na to koliko su tačk
 
 Poređenje uniformnosti distribucije rešenja na Pareto frontu između moje implementacije NSGA-II i pymoo implementacije pokazuje vrlo slične rezultate, sa minimalnim razlikama u distribuciji rešenja. Grafički prikazi pokazuju da se tačke na Pareto frontu vrlo dobro preklapaju, što ukazuje na to da su rešenja ravnomerno raspoređena.
 
+\section{Diskusija o razlikama između implementacija}
+Iz prethodne analize, jasno je da postoji određena razlika između moje implementacije algoritma i pymoo implementacije.
+
+Prva značajna razlika odnosi se na proces selekcije i ukrštanja.
+Pymoo koristi detaljno podešen operator selekcije roditelja koji omogućava efikasniju genetsku raznovrsnost populacije, dok moja implementacija primenjuje standardnu turnirsku selekciju sa određenom veličinom turnira.  Ova razlika može uticati na način na koji se rešenja raspoređuju duž Pareto fronta, pri čemu pymoo obezbeđuje širu pokrivenost ciljnog prostora, dok moja implementacija može težiti ka centralnim delovima fronta.
+
+Drugi faktor je način na koji se mutacija i ukrštanje sprovode. Obe implementacije koriste polinomijalnu mutaciju, samo što pymoo ima prilagođene distribucione parametre koji omogućavaju bolje balansiranje intenzifikacije i diverzifikacije rešenja, dok moja implementacija koristi fiksne parametre.  Kao rezultat, pymoo može generisati rešenja koja su ravnomernije raspoređena po frontu, dok moja verzija može imati koncentraciju rešenja u određenim oblastima, što dovodi do užeg maksimalnog raspona (MS).
+
+Treći faktor koji doprinosi razlikama je algoritam sortiranja Pareto fronta. Pymoo implementacija koristi optimizovane procedure za brzo nedominirano sortiranje, koje mogu preciznije obrađivati dominaciju između rešenja i time omogućiti bolju raspodelu tačaka. U mojoj implementaciji, iako se koristi sličan algoritam, moguće su manje razlike u načinu rangiranja i dodeljivanja distance gužve (\textit{crowding distance}), što može dovesti do drugačijeg rasporeda rešenja.
+
+Dodatno, implementacije se razlikuju u brzini konvergencije, tj. efikasnosti. Pymoo implementacija brže postiže stabilne rezultate zbog optimizovanog upravljanja populacijom i mehanizama selekcije, što omogućava efikasnije širenje fronta. U mom slučaju, pokazalo se da povećanje broja generacija značajno poboljšava kvalitet rešenja, što sugeriše da je mojoj implementaciji potrebno više iteracija kako bi dostigla iste nivoe pokrivenosti kao pymoo.
+
 \section{Zaključak}
 U ovom radu implementiran je NSGA-II algoritam i upoređen sa postojećom pymoo implementacijom kroz metrike hipervolumena, maksimalnog raspona i uniformnosti distribucije rešenja na Pareto frontu.
 Rezultati analize pokazuju da moja implementacija NSGA-II postiže gotovo identične vrednosti hipervolumena kao pymoo implementacija. Ovo potvrđuje da algoritam uspešno generiše kvalitetna rešenja i pokriva relevantan deo prostora ciljeva.
 
-Međutim, maksimalni raspon rešenja u mojoj implementaciji pokazuje značajno niže vrednosti u poređenju sa pymoo, što sugeriše da se rešenja nalaze u užem delu Pareto fronta. To ukazuje na potencijalno slabiju pokrivenost u širini prostora ciljeva, što može biti posledica parametara selekcije, mutacije ili veličine populacije.
-
-Distribucija rešenja na Pareto frontu je veoma slična između moje i pymoo implementacije, pri čemu su razlike minimalne.
+Međutim, maksimalni raspon rešenja u mojoj implementaciji pokazuje značajno niže vrednosti u poređenju sa pymoo, što sugeriše da se rešenja nalaze u užem delu Pareto fronta. To ukazuje na potencijalno slabiju pokrivenost u širini prostora ciljeva, što može biti posledica parametara selekcije i mutacije.
 
 Jedno od ključnih zapažanja tokom eksperimentisanja jeste da povećanje broja generacija značajno utiče na performanse mog algoritma. Inicijalno sam koristila broj generacija 200, kako je navedeno u literaturi, ali su rezultati pokazali veća odstupanja u odnosu na pymoo implementaciju. Kada sam povećala broj generacija na 500, dobila sam značajno bolje rezultate, što sugeriše da pymoo algoritam brže konvergira u odnosu na moju implementaciju.
 \\
@@ -487,6 +497,7 @@ Mogući pravci daljeg unapređenja uključuju:
 
 \begin{itemize}
     \item Podešavanje hiperparametara algoritma kako bi se poboljšala širina pokrivenosti Pareto fronta.
+    \item Optimizaciju selekcije i mutacije za ravnomerniju distribuciju rešenja.
     \item Istraživanje tehnika ubrzanja konvergencije kako bi algoritam dostizao kvalitetna rešenja u manjem broju generacija.
     \item Proširenje analize na još neke test funkcije i stvarne optimizacione probleme radi bolje procene performansi algoritma.
 	\item Prilagođavanje algoritma za rešavanje diskretnih optimizacionih problema.
@@ -507,6 +518,8 @@ Ova analiza pokazuje da je implementirani NSGA-II algoritam konkurentan u odnosu
 \bibitem{sbx} M. M. N. Rafstedt, \textit{Analyzing the Simulated Binary Crossover Operator in Multi-Objective Evolutionary Algorithms}, \url{https://www.duo.uio.no/handle/10852/111478}
 
 \bibitem{gete-plots} Y. Sato and M. Sato, \textit{Using Dominated Solutions at Edges to the Diversity and the Uniformity of Non‑dominated Solution Distributions in NSGA‑II}, \url{https://www.researchgate.net/publication/362563469_Using_Dominated_Solutions_at_Edges_to_the_Diversity_and_the_Uniformity_of_Non-dominated_Solution_Distributions_in_NSGA-II#fullTextFileContent}
+
+\bibitem{pymoo} pymoo: Multi-objective optimization in Python, \url{https://github.com/anyoptimization/pymoo}
 
 
 \end{thebibliography}
