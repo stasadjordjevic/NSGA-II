@@ -354,6 +354,8 @@ g(x) = 1 + \frac{9}{n-1} \sum_{i=2}^n x_i,
 i \( x_1 \in [0, 1] \), \( x_i \in [0, 1] \) za \( i = 2, 3, \dots, n \).
 
 \section{Poređenje mojih rezultata i onih iz literature}
+
+\subsection{Pymoo}
 Pymoo je optimizaciona biblioteka razvijena u Pythonu, namenjena rešavanju višekriterijumskih optimizacionih problema. Njena implementacija NSGA-II algoritma je dobro optimizovana i široko korišćena u istraživačkim radovima i industrijskim primenama.
 Za poređenje mog rešenja sa rešenjem iz biblioteke pymoo, koristiću nekoliko metrika koje omogućavaju objektivnu procenu kvaliteta rešenja:
 \begin{enumerate} 
@@ -376,7 +378,7 @@ U našem rešenju, koristićemo iste parametre tamo gde mogu da budu isti.
 \\
 Nakon isprobavanja, došla sam do zaključka da je bolje povećati broj generacija. Primetila sam mnogo veća odstupanja kad sam inicijalno stavila da je broj generacija 200. Kada sam promenila da broj generacija bude 500, dobila sam značajno bolje rezultate. Time zaključujem da pymoo algoritam brže konvergira od moje implementacije algoritma.
 
-\subsection{Hipervolumen (HV)}
+\subsubsection{Hipervolumen (HV)}
 Hipervolumen meri oblast pokrivenu rešenjima na Pareto frontu u višedimenzionalnom prostoru. Za dva cilja, to je površina između tačaka na Pareto frontu i referentne tačke, koja se nalazi izvan dometa svih rešenja, često sa većim vrednostima nego što je moguće dostići.
    
 Formule za izračunavanje hipervolumena su sledeće:
@@ -418,7 +420,7 @@ Rezultati hipervolumena nam omogućavaju da procenimo efikasnost i uniformnost d
 
 U poređenju hipervolumena između moje implementacije NSGA-II i pymoo implementacije, rezultati pokazuju gotovo identične vrednosti, s tim da je moj hipervolumen za veoma malu vrednost manji u svim testiranim funkcijama, što je i očekivano. To ukazuje na to da je moj algoritam uspešno postigao visok nivo pokrivanja prostora ciljeva, odnosno da je Pareto front ravnomerno raspoređen i da su rešenja dobar odraz kvaliteta.
 
-\subsection{Maksimalni raspon (MS)}
+\subsubsection{Maksimalni raspon (MS)}
 Maksimalni raspon (engl. \textit{maximal spread}) meri udaljenost između najudaljenijih tačaka na Pareto frontu po svakom cilju. Ovo nam daje uvid u to kako su rešenja raspoređena duž fronta, tj. koliko je front širok u svakom cilju.
 
 \begin{figure}[H]
@@ -446,7 +448,7 @@ Rezultati maksimalnog raspona pokazuju da su vrednosti mog NSGA-II algoritma zna
 Ovo sugeriše da su rešenja generisana mojim algoritmom koncentrisanija u užem delu Pareto fronta, dok pymoo postiže bolju pokrivenost u širini.
  	
 
-\subsection{Uniformnost distribucije rešenja}
+\subsubsection{Uniformnost distribucije rešenja}
 Uniformnost distribucije rešenja na Pareto frontu ukazuje na to koliko su tačke ravnomerno raspoređene. Dobar algoritam treba da postigne visok nivo uniformnosti kako bi osigurao kvalitetan i ravnomerno raspoređen Pareto front.
 
 \begin{figure}[H]
@@ -472,8 +474,42 @@ Uniformnost distribucije rešenja na Pareto frontu ukazuje na to koliko su tačk
 
 Poređenje uniformnosti distribucije rešenja na Pareto frontu između moje implementacije NSGA-II i pymoo implementacije pokazuje vrlo slične rezultate, sa minimalnim razlikama u distribuciji rešenja. Grafički prikazi pokazuju da se tačke na Pareto frontu vrlo dobro preklapaju, što ukazuje na to da su rešenja ravnomerno raspoređena.
 
+\subsection{SPEA2}
+Moju implementaciju NSGA2 algoritma uporediću sa još jednim algoritmom koji je namenjen za rešavanje istih problema - u pitanju je  Evolucioni algoritam sa Pareto snagom 2 (engl. Strenght Pareto Evolutionary Algorithm - SPEA2). 
+SPEA2 je evolucioni algoritam za višekriterijumske optimizacione probleme, poboljšana verzija SPEA algoritma. Kao i NSGA-II, koristi Pareto dominaciju za selekciju rešenja, ali uvodi dodatne mehanizme za očuvanje raznovrsnosti populacije. Ključne karakteristike uključuju unapređenu procenu gustine rešenja, eksteran arhiv za skladištenje nedominiranih rešenja i efikasnu strategiju skraćivanja arhiva. Ove osobine omogućavaju SPEA2 algoritmu da bolje aproksimira Pareto front i poboljša stabilnost optimizacije.
+
+Rezultati su veoma slični kao kod poređenja moje implementacije sa bibliotečkom implementacijom NSGA-II algoritma. Na isti način je vršeno poređenje, jer u pymoo biblioteci postoji i SPEA2 algoritam.
+
+Detaljnu implementaciju algortima SPEA2 neću ovde komentarisati, cilj ovog poređenja je samo da se uporedi moja implementacija sa još nekim algoritmom za višekriterijumske optimizacione probleme.
+
+Ovde ću prikazati rezultate poređenja za funkciju ZDT2.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/hv_spea2.png}
+    \caption{Poređenje hipervolumena za \( ZDT2 \) funkciju.}
+    \label{fig:hv_spea2}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/ms_spea2.png}
+    \caption{Poređenje maksimalnog raspona za \( ZDT2 \) funkciju.}
+    \label{fig:ms_spea2}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/pareto_spea2.png}
+    \caption{Poređenje distribucije rešenja za \( ZDT2 \) funkciju.}
+    \label{fig:pareto_spea2}
+\end{figure}
+
+Primećuju se iste razlike kao kod prethodnog poređenja. SPEA2 u biblioteci pymoo je implementiran tako da daje iste rezultate kao i NSGA-II iz iste biblioteke.
+
+
 \section{Diskusija o razlikama između implementacija}
-Iz prethodne analize, jasno je da postoji određena razlika između moje implementacije algoritma i pymoo implementacije.
+Iz prethodne analize, jasno je da postoji određena razlika između moje implementacije i pymoo implementacije NSGA-II algoritma.
 
 Prva značajna razlika odnosi se na proces selekcije i ukrštanja.
 Pymoo koristi detaljno podešen operator selekcije roditelja koji omogućava efikasniju genetsku raznovrsnost populacije, dok moja implementacija primenjuje standardnu turnirsku selekciju sa određenom veličinom turnira.  Ova razlika može uticati na način na koji se rešenja raspoređuju duž Pareto fronta, pri čemu pymoo obezbeđuje širu pokrivenost ciljnog prostora, dok moja implementacija može težiti ka centralnim delovima fronta.
@@ -521,7 +557,17 @@ Ova analiza pokazuje da je implementirani NSGA-II algoritam konkurentan u odnosu
 
 \bibitem{pymoo} pymoo: Multi-objective optimization in Python, \url{https://github.com/anyoptimization/pymoo}
 
+\bibitem{spea2} \url{https://www.research-collection.ethz.ch/bitstream/handle/20.500.11850/145755/eth-24689-01.pdf?sequence=1&isAllowed=y} %ovde ima poredjenje spea2 sa nsga2
+
+\bibitem{spea2-explained} Xi Liu and Dan Zhang, \textit{An Improved SPEA2 Algorithm with Local Search for
+Multi-Objective Investment Decision-Making}, \url{https://www.researchgate.net/publication/332608876_An_Improved_SPEA2_Algorithm_with_Local_Search_for_Multi-Objective_Investment_Decision-Making/figures?lo=1&utm_source=google&utm_medium=organic#fullTextFileContent}
+
 
 \end{thebibliography}
 
 \end{document}
+
+%TODO
+% PROSTUDIRATI SPEA LITERATURU
+% NAPISATI UKRATKO O SPEA2 ALGORITMU
+% VIDETI KAKO ISKODIRATI ANALOGNO POREDJENJE NSGA2 I SPEA2
