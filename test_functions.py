@@ -1,5 +1,4 @@
 import numpy as np
-#TODO dodati ranac?
 
 def ZDT1(x):
     n = len(x)  # Number of decision variables

@@ -475,15 +475,14 @@ Uniformnost distribucije rešenja na Pareto frontu ukazuje na to koliko su tačk
 Poređenje uniformnosti distribucije rešenja na Pareto frontu između moje implementacije NSGA-II i pymoo implementacije pokazuje vrlo slične rezultate, sa minimalnim razlikama u distribuciji rešenja. Grafički prikazi pokazuju da se tačke na Pareto frontu vrlo dobro preklapaju, što ukazuje na to da su rešenja ravnomerno raspoređena.
 
 \subsection{SPEA2}
-Moju implementaciju NSGA2 algoritma uporediću sa još jednim algoritmom koji je namenjen za rešavanje istih problema - u pitanju je  Evolucioni algoritam sa Pareto snagom 2 (engl. Strenght Pareto Evolutionary Algorithm - SPEA2). 
+Moju implementaciju NSGA2 algoritma uporediću sa još jednim algoritmom koji je namenjen za rešavanje istih problema - u pitanju je \textbf{Evolucioni algoritam sa Pareto snagom 2} (engl. Strenght Pareto Evolutionary Algorithm - SPEA2). 
 SPEA2 je evolucioni algoritam za višekriterijumske optimizacione probleme, poboljšana verzija SPEA algoritma. Kao i NSGA-II, koristi Pareto dominaciju za selekciju rešenja, ali uvodi dodatne mehanizme za očuvanje raznovrsnosti populacije. Ključne karakteristike uključuju unapređenu procenu gustine rešenja, eksteran arhiv za skladištenje nedominiranih rešenja i efikasnu strategiju skraćivanja arhiva. Ove osobine omogućavaju SPEA2 algoritmu da bolje aproksimira Pareto front i poboljša stabilnost optimizacije.
 
 Rezultati su veoma slični kao kod poređenja moje implementacije sa bibliotečkom implementacijom NSGA-II algoritma. Na isti način je vršeno poređenje, jer u pymoo biblioteci postoji i SPEA2 algoritam.
 
 Detaljnu implementaciju algortima SPEA2 neću ovde komentarisati, cilj ovog poređenja je samo da se uporedi moja implementacija sa još nekim algoritmom za višekriterijumske optimizacione probleme.
 
-Ovde ću prikazati rezultate poređenja za funkciju ZDT2.
-
+Prikazani su rezultati poređenja za funkciju ZDT2.
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.7\textwidth]{images/hv_spea2.png}
@@ -545,7 +544,7 @@ Ova analiza pokazuje da je implementirani NSGA-II algoritam konkurentan u odnosu
 \renewcommand{\refname}{Literatura}
 \begin{thebibliography}{10}
 \bibliographystyle{unsrt}
-\bibitem{ieee} K. Deb, A. Pratap, S. Agarwal, and T. Meyarivan, \textit{A fast and elitist multiobjective genetic algorithm: NSGA-II}, \url{https://ieeexplore.ieee.org/abstract/document/996017}
+\bibitem{ieee} K. Deb, A. Pratap, S. Agarwal and T. Meyarivan, \textit{A fast and elitist multiobjective genetic algorithm: NSGA-II}, \url{https://ieeexplore.ieee.org/abstract/document/996017}
 
 \bibitem{sbx-poly-impl} A. Seshadri, \textit{A fast elitist multiobjective genetic algorithm}, \url{https://www.academia.edu/download/53297141/NSGA_II.pdf}
 
@@ -557,17 +556,12 @@ Ova analiza pokazuje da je implementirani NSGA-II algoritam konkurentan u odnosu
 
 \bibitem{pymoo} pymoo: Multi-objective optimization in Python, \url{https://github.com/anyoptimization/pymoo}
 
-\bibitem{spea2} \url{https://www.research-collection.ethz.ch/bitstream/handle/20.500.11850/145755/eth-24689-01.pdf?sequence=1&isAllowed=y} %ovde ima poredjenje spea2 sa nsga2
+\bibitem{pymoo-calls} \url{https://pymoo.org/algorithms/moo/nsga2.html}
 
-\bibitem{spea2-explained} Xi Liu and Dan Zhang, \textit{An Improved SPEA2 Algorithm with Local Search for
-Multi-Objective Investment Decision-Making}, \url{https://www.researchgate.net/publication/332608876_An_Improved_SPEA2_Algorithm_with_Local_Search_for_Multi-Objective_Investment_Decision-Making/figures?lo=1&utm_source=google&utm_medium=organic#fullTextFileContent}
+\bibitem{spea2} E. Zitzler, M. Laumanns and L. Thiele, \textit{SPEA2: Improving the Strength Pareto Evolutionary Algorithm}, \url{https://www.research-collection.ethz.ch/handle/20.500.11850/145755}
+
 
 
 \end{thebibliography}
 
 \end{document}
-
-%TODO
-% PROSTUDIRATI SPEA LITERATURU
-% NAPISATI UKRATKO O SPEA2 ALGORITMU
-% VIDETI KAKO ISKODIRATI ANALOGNO POREDJENJE NSGA2 I SPEA2

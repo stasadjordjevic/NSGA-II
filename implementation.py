@@ -151,11 +151,6 @@ def mutation(child: Individual, p: float, eta_m = 20):
             child.code[i] = min(max(child.code[i], 0), 1)
 
 
-
-from matplotlib import pyplot as plt
-
-
-
 def nsga2(population_size, num_variables, num_generations, 
           tournament_size, mutation_prob, elitism_size, objective_function,
           initial_population = None):
