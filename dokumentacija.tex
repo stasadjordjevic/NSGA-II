@@ -397,6 +397,8 @@ Formule za izračunavanje hipervolumena su sledeće:
 
 Rezultati hipervolumena nam omogućavaju da procenimo efikasnost i uniformnost distribucije rešenja na Pareto frontu. Veći hipervolumen ukazuje na bolji raspored rešenja i bolju pokrivenost prostora ciljeva.
 
+U računanju hipervolumena sam koristila funkciju hv iz biblioteke pygmo.
+
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.7\textwidth]{images/hv_zdt1.png}
@@ -424,6 +426,11 @@ U poređenju hipervolumena između moje implementacije NSGA-II i pymoo implement
 Maksimalni raspon (engl. \textit{maximal spread}) meri udaljenost između najudaljenijih tačaka na Pareto frontu po svakom cilju. Ovo nam daje uvid u to kako su rešenja raspoređena duž fronta, tj. koliko je front širok u svakom cilju.
 Veća vrednost MS ukazuje na bolju pokrivenost ciljnog prostora, dok manja vrednost može značiti da su rešenja koncentrisana u užem delu fronta.
 
+Maksimalni raspon sam računala po formuli:
+\begin{equation}
+MS = \sqrt{ \sum_{k=1}^{r} \left( f_k^{\max} - f_k^{\min} \right) }
+\end{equation}
+
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.7\textwidth]{images/ms_zdt1.png}
@@ -445,8 +452,8 @@ Veća vrednost MS ukazuje na bolju pokrivenost ciljnog prostora, dok manja vredn
     \label{fig:ms_zdt3}
 \end{figure}
 
-Rezultati maksimalnog raspona pokazuju da su vrednosti mog NSGA-II algoritma značajno veće u poređenju sa rezultatima pymoo implementacije.
-Ovo sugeriše da su rešenja generisana mojim algoritmom koncentrisanija u širem delu Pareto fronta, što znači da postiže bolju pokrivenost u širini za razliku od pymoo implementacije.
+Rezultati maksimalnog raspona pokazuju da su vrednosti mog NSGA-II algoritma malo veće u poređenju sa rezultatima pymoo implementacije.
+Ovo sugeriše da su rešenja generisana mojim algoritmom koncentrisanija u malo širem delu Pareto fronta, što znači da postiže malo bolju pokrivenost u širini za razliku od pymoo implementacije.
 
 \subsubsection{Uniformnost distribucije rešenja}
 Uniformnost distribucije rešenja na Pareto frontu ukazuje na to koliko su tačke ravnomerno raspoređene. Dobar algoritam treba da postigne visok nivo uniformnosti kako bi osigurao kvalitetan i ravnomerno raspoređen Pareto front.
@@ -504,7 +511,7 @@ Prikazani su rezultati poređenja za funkciju ZDT2.
     \label{fig:pareto_spea2}
 \end{figure}
 
-Primećuju se iste razlike kao kod prethodnog poređenja. SPEA2 u biblioteci pymoo je implementiran tako da daje iste rezultate kao i NSGA-II iz iste biblioteke.
+Primećuju se skoro iste razlike kao kod prethodnog poređenja, samo što su još manje razlike kod metrike maksimalnog raspona. SPEA2 u biblioteci pymoo je implementiran tako da daje iste rezultate kao i NSGA-II iz iste biblioteke.
 
 
 \section{Diskusija o razlikama između implementacija}
@@ -513,7 +520,7 @@ Iz prethodne analize, jasno je da postoji određena razlika između moje impleme
 Prva značajna razlika odnosi se na proces selekcije i ukrštanja.
 Pymoo koristi detaljno podešen operator selekcije roditelja koji omogućava efikasniju genetsku raznovrsnost populacije, dok moja implementacija primenjuje standardnu turnirsku selekciju sa određenom veličinom turnira.  Ova razlika može uticati na način na koji se rešenja raspoređuju duž Pareto fronta, pri čemu pymoo obezbeđuje širu pokrivenost ciljnog prostora, dok moja implementacija može težiti ka centralnim delovima fronta.
 
-Drugi faktor je način na koji se mutacija i ukrštanje sprovode. Obe implementacije koriste polinomijalnu mutaciju, samo što pymoo ima prilagođene distribucione parametre koji omogućavaju bolje balansiranje intenzifikacije i diverzifikacije rešenja, dok moja implementacija koristi fiksne parametre.  Kao rezultat, pymoo može generisati rešenja koja su ravnomernije raspoređena po frontu, dok moja verzija pokazuje značajno veći maksimalni raspon (MS), što znači da obuhvata širu oblast ciljnog prostora. Veći MS u mojoj implementaciji ukazuje da algoritam uspeva da pronađe ekstremne tačke Pareto fronta, ali može dovesti do manje ravnomerne raspodele rešenja, pri čemu neka područja fronta mogu ostati slabije pokrivena.
+Drugi faktor je način na koji se mutacija i ukrštanje sprovode. Obe implementacije koriste polinomijalnu mutaciju, samo što pymoo ima prilagođene distribucione parametre koji omogućavaju bolje balansiranje intenzifikacije i diverzifikacije rešenja, dok moja implementacija koristi fiksne parametre.  Kao rezultat, pymoo može generisati rešenja koja su ravnomernije raspoređena po frontu, dok moja verzija pokazuje malo veći maksimalni raspon (MS) u određenim situacijama, što znači da obuhvata malo širu oblast ciljnog prostora. Veći MS u mojoj implementaciji ukazuje da algoritam uspeva da pronađe ekstremne tačke Pareto fronta, ali može dovesti do manje ravnomerne raspodele rešenja, pri čemu neka područja fronta mogu ostati slabije pokrivena.
 
 Treći faktor koji doprinosi razlikama je algoritam sortiranja Pareto fronta. Pymoo implementacija koristi optimizovane procedure za brzo nedominirano sortiranje, koje mogu preciznije obrađivati dominaciju između rešenja i time omogućiti bolju raspodelu tačaka. U mojoj implementaciji, iako se koristi sličan algoritam, moguće su manje razlike u načinu rangiranja i dodeljivanja distance gužve (\textit{crowding distance}), što može dovesti do drugačijeg rasporeda rešenja.
 
@@ -523,7 +530,7 @@ Dodatno, implementacije se razlikuju u brzini konvergencije, tj. efikasnosti. Py
 U ovom radu implementiran je NSGA-II algoritam i upoređen sa postojećom pymoo implementacijom kroz metrike hipervolumena, maksimalnog raspona i uniformnosti distribucije rešenja na Pareto frontu.
 Rezultati analize pokazuju da moja implementacija NSGA-II postiže gotovo identične vrednosti hipervolumena kao pymoo implementacija. Ovo potvrđuje da algoritam uspešno generiše kvalitetna rešenja i pokriva relevantan deo prostora ciljeva.
 
-Međutim, maksimalni raspon rešenja u mojoj implementaciji pokazuje značajno više vrednosti u poređenju sa pymoo, što sugeriše da se rešenja nalaze u širem delu Pareto fronta. Veći MS sugeriše da algoritam uspešno pronalazi ekstremne tačke fronta, ali može dovesti do manje ravnomerne raspodele rešenja. Ova razlika može biti posledica parametara selekcije i mutacije.
+Međutim, maksimalni raspon rešenja u mojoj implementaciji pokazuje malo više vrednosti u poređenju sa pymoo, što sugeriše da se rešenja nalaze u malo širem delu Pareto fronta. Veći MS sugeriše da algoritam uspešno pronalazi ekstremne tačke fronta, ali može dovesti do manje ravnomerne raspodele rešenja. Ova razlika može biti posledica parametara selekcije i mutacije.
 
 Jedno od ključnih zapažanja tokom eksperimentisanja jeste da povećanje broja generacija značajno utiče na performanse mog algoritma. Inicijalno sam koristila broj generacija 200, kako je navedeno u literaturi, ali su rezultati pokazali veća odstupanja u odnosu na pymoo implementaciju. Kada sam povećala broj generacija na 500, dobila sam značajno bolje rezultate, što sugeriše da pymoo algoritam brže konvergira u odnosu na moju implementaciju.
 \\
